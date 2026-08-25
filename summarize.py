@@ -56,7 +56,13 @@ ARXIV_RE = re.compile(r"arxiv\.org/(?:abs|pdf|html)/([0-9]{4}\.[0-9]{4,5})(?:v\d
 
 def is_ignored_domain(url: str) -> bool:
     host = urlparse(url).netloc.lower()
-    return any(host == d or host.endswith("." + d) for d in IGNORED_DOMAINS)
+    if any(host == d or host.endswith("." + d) for d in IGNORED_DOMAINS):
+        return True
+    # The bot's own summary messages link back to this sheet — don't let a
+    # future run pick that link back up as if it were a shared article.
+    if f"/spreadsheets/d/{GOOGLE_SHEET_ID}" in url:
+        return True
+    return False
 
 
 def resolve_channel_id(client: WebClient, channel: str) -> str:
