@@ -1,0 +1,40 @@
+name: Weekly Slack article summary
+
+on:
+  schedule:
+    # 15:00 UTC every Thursday (~11am US Eastern during EDT). Cron doesn't
+    # adjust for DST, so shift to "0 16 * * 4" in winter (EST) if the exact
+    # local time matters to you.
+    - cron: "0 15 * * 4"
+  workflow_dispatch: {}
+
+jobs:
+  summarize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Write Google service account credentials
+        run: echo '${{ secrets.GOOGLE_CREDENTIALS_JSON }}' > service-account.json
+
+      - name: Run summarizer
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+          SLACK_SUMMARY_CHANNEL: ${{ secrets.SLACK_SUMMARY_CHANNEL }}
+          GOOGLE_CREDENTIALS_PATH: service-account.json
+          GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
+          GOOGLE_SHEET_TAB: ${{ secrets.GOOGLE_SHEET_TAB }}
+          DAYS_BACK: "7"
+        run: python summarize.py
+
+      - name: Clean up credentials file
+        if: always()
+        run: rm -f service-account.json
