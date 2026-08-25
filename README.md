@@ -71,7 +71,7 @@ links already in the sheet.
 ## 4. Push to GitHub and set up the scheduled run
 
 This repo includes `.github/workflows/weekly-summary.yml`, which runs the
-script every Monday at 13:00 UTC via GitHub Actions — no local machine
+script every Thursday at 15:00 UTC (~11am Eastern) via GitHub Actions — no local machine
 needs to be powered on.
 
 1. Create a GitHub repo and push this folder to it (private repo is fine —
