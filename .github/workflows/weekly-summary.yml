@@ -2,14 +2,16 @@ name: Weekly Slack article summary
 
 on:
   schedule:
-    # ~15:00 UTC every Thursday (~11am US Eastern during EDT). Cron doesn't
-    # adjust for DST, so shift to "7 16 * * 4" in winter (EST) if the exact
-    # local time matters to you.
-    #
-    # Deliberately offset from the top of the hour (:07, not :00): GitHub
-    # explicitly deprioritizes schedule events at popular times like exact
-    # hour marks under high load, which caused this to fire ~9h late once.
-    - cron: "7 15 * * 4"
+    # 12:07 UTC every Thursday, aiming to land well before 1pm US Eastern.
+    # Deliberately early with a buffer, not timed close to the deadline:
+    # GitHub Actions schedule events are best-effort and can run late under
+    # high load (this once fired ~9h late), so there's no way to guarantee
+    # an exact time — only to leave enough slack that a typical delay still
+    # lands before 1pm. 12:07 UTC is before 1pm Eastern in both EDT (UTC-4,
+    # deadline 17:00 UTC) and EST (UTC-5, deadline 18:00 UTC), so no DST
+    # adjustment is needed. Also off the top of the hour (:07, not :00),
+    # since GitHub deprioritizes schedule events at popular exact-hour times.
+    - cron: "7 12 * * 4"
   workflow_dispatch: {}
 
 jobs:
