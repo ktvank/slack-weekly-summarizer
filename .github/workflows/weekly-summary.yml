@@ -2,10 +2,14 @@ name: Weekly Slack article summary
 
 on:
   schedule:
-    # 15:00 UTC every Thursday (~11am US Eastern during EDT). Cron doesn't
-    # adjust for DST, so shift to "0 16 * * 4" in winter (EST) if the exact
+    # ~15:00 UTC every Thursday (~11am US Eastern during EDT). Cron doesn't
+    # adjust for DST, so shift to "7 16 * * 4" in winter (EST) if the exact
     # local time matters to you.
-    - cron: "0 15 * * 4"
+    #
+    # Deliberately offset from the top of the hour (:07, not :00): GitHub
+    # explicitly deprioritizes schedule events at popular times like exact
+    # hour marks under high load, which caused this to fire ~9h late once.
+    - cron: "7 15 * * 4"
   workflow_dispatch: {}
 
 jobs:
